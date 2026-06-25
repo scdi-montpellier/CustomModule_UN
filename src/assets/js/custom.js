@@ -664,3 +664,123 @@ function doSearch() {
   }
  
 })();
+
+
+/* ============================================================
+           LIENS AUTHENTIFIÉS — bibliotheque.unimes.fr
+   ============================================================
+   Ajoute automatiquement #isConnected=true sur tous les liens
+   pointant vers bibliotheque.unimes.fr lorsque l'utilisateur
+   est connecté à Primo NDE. Les liens sont laissés inchangés
+   pour les utilisateurs anonymes.
+
+   Détection de session (Primo NDE / SAML) — par ordre de priorité :
+     1. Cookie auth=SAML          (positionné après auth SAML réussie)
+     2. Cookie SAMLIdpSessionIndex (identifiant de session IdP)
+     3. DOM nde-user-area          (fallback : composant non vide)
+   ============================================================ */
+(function () {
+  'use strict';
+
+  /* ── Configuration ───────────────────────────────────────── */
+  const TARGET_DOMAIN  = 'bibliotheque.unimes.fr';
+  const FRAGMENT_PARAM = 'isConnected=true';
+  /* ─────────────────────────────────────────────────────────── */
+
+  // ── Stratégie 1 : cookie auth=SAML ────────────────────────
+  // Présent uniquement après une authentification SAML réussie.
+  function checkSamlCookie() {
+    return document.cookie.split(';').some(function (c) {
+      return c.trim() === 'auth=SAML';
+    });
+  }
+
+  // ── Stratégie 2 : cookie SAMLIdpSessionIndex ──────────────
+  // Identifiant de session IdP, absent en mode anonyme.
+  function checkSamlSessionCookie() {
+    return document.cookie.split(';').some(function (c) {
+      return c.trim().startsWith('SAMLIdpSessionIndex=');
+    });
+  }
+
+  // ── Stratégie 3 : composant nde-user-area non vide ────────
+  // Le composant peut exister à vide en mode anonyme ;
+  // on s'assure qu'il contient du contenu rendu par Angular.
+  function checkUserAreaDom() {
+    const el = document.querySelector('nde-user-area');
+    return !!(el && el.children.length > 0 && el.textContent.trim().length > 0);
+  }
+
+  // ── Agrégation ────────────────────────────────────────────
+  function isAuthenticated() {
+    return checkSamlCookie() || checkSamlSessionCookie() || checkUserAreaDom();
+  }
+
+  // ── Traite un lien individuel ──────────────────────────────
+  function processLink(anchor) {
+    if (!anchor.href) return;
+
+    let url;
+    try { url = new URL(anchor.href); }
+    catch (_) { return; }
+
+    // Correspondance exacte sur bibliotheque.unimes.fr uniquement
+    if (url.hostname !== TARGET_DOMAIN) return;
+
+    // Marqueur pour ne pas retraiter le même lien
+    if (anchor.dataset.connectedProcessed === '1') return;
+    anchor.dataset.connectedProcessed = '1';
+
+    if (isAuthenticated()) {
+      url.hash = FRAGMENT_PARAM;
+      anchor.href = url.toString();
+    }
+    // Sinon : lien laissé inchangé
+  }
+
+  // ── Traite tous les liens présents dans un nœud ───────────
+  function processLinks(root) {
+    root.querySelectorAll('a[href]').forEach(processLink);
+  }
+
+  // ── Observe les mutations du DOM (SPA Angular) ────────────
+  function startObserver() {
+    const observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mut) {
+        mut.addedNodes.forEach(function (node) {
+          if (node.nodeType !== 1) return;
+          if (node.matches && node.matches('a[href]')) processLink(node);
+          processLinks(node);
+        });
+      });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  // ── Ré-évaluation à chaque navigation SPA ─────────────────
+  // Primo NDE émet popstate / hashchange lors des changements
+  // de route — pas de $rootScope AngularJS disponible en NDE.
+  function listenRouteChange() {
+    ['popstate', 'hashchange'].forEach(function (evt) {
+      window.addEventListener(evt, function () {
+        document.querySelectorAll('[data-connected-processed]')
+          .forEach(function (el) { delete el.dataset.connectedProcessed; });
+        processLinks(document.body);
+      });
+    });
+  }
+
+  // ── Point d'entrée ────────────────────────────────────────
+  function init() {
+    processLinks(document.body);
+    startObserver();
+    listenRouteChange();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    setTimeout(init, 500);
+  }
+})();
