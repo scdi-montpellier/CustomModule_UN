@@ -21,8 +21,22 @@
   border:1px solid #5f5e5c !important;
 }
 
+/*
 .results-container.filters-slide-open {  
   z-index: 1000;
+}
+*/
+
+/* -------------------------------------------
+	HOMEPAGE - custom-search-bar-container
+------------------------------------------- */
+
+.custom-search-bar-container h1 {
+  font-family: 'Mulish', sans-serif;
+}
+
+.search_box_container {
+  font-family: 'Noto Sans Display', sans-serif !important;
 }
 
 /* --------------------------------
@@ -69,6 +83,22 @@ nde-highlight span {
 /* Décallage texte/cadre top sur Carousel Card Image */
 .carousel-card .mat-mdc-card-header img {
     top: 60% !important;
+}
+
+/* Emplacements pour les titres liés */
+.related-titles-list div h4,
+.related-titles-list .flex-column.gap-1 > span {
+  display: none;
+}
+
+/* Bloc "Aucun résultat" */
+nde-search-no-results .we-suggest-container {
+visibility: hidden;
+}
+
+/* expand-results-options-line */
+div:has(> button[aria-controls="expand-results-options-line"]) {
+display: none;
 }
 
 /* --------------------------------
@@ -182,18 +212,6 @@ nde-main-menu .mat-divider.mat-divider-vertical {
 .main-menu-mobile-btn {
 	position: relative;
     top: -1rem;
-}
-
-/* -------------------------------------------
-	HOMEPAGE - custom-search-bar-container
-------------------------------------------- */
-
-.custom-search-bar-container h1 {
-  font-family: 'Mulish', sans-serif;
-}
-
-.search_box_container {
-  font-family: 'Noto Sans Display', sans-serif !important;
 }
 
 /* --------------------------------
