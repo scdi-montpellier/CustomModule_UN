@@ -86,9 +86,9 @@ nde-highlight span {
 }
 
 /* Emplacements pour les titres liés */
-.related-titles-list div h4,
-.related-titles-list .flex-column.gap-1 > span {
-  display: none;
+.related-titles-list div h4
+/* .related-titles-list .flex-column.gap-1 > span */ {
+	  display: none;
 }
 
 /* Bloc "Aucun résultat" */
