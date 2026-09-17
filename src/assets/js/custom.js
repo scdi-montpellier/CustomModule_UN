@@ -175,58 +175,46 @@ console.log('Hello from custom.js');
    ============================================================ */
 (function () {
   var REMOTE_SEARCH_URL = 'https://bibliotheque.unimes.fr/recherche';
- 
-  /* ----------------------------------------------------------
-     Branchement des listeners une fois les éléments présents
-  ---------------------------------------------------------- */
-  function initSearchModal() {
-    var toggle    = document.querySelector('.searchToggle');
-    var overlay   = document.getElementById('searchModalOverlay');
-    var closeBtn  = document.getElementById('searchModalClose');
-    var input     = document.getElementById('global-search-input');
-    var form      = document.getElementById('searchModalForm');
- 
-    // Si l'un des éléments est absent, on abandonne — waitForModal réessaiera
-    if (!toggle || !overlay || !closeBtn || !input || !form) return false;
- 
-    /* Ouverture */
-    toggle.addEventListener('click', function () {
+
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('.searchToggle')) {
+      var overlay = document.getElementById('searchModalOverlay');
+      var input   = document.getElementById('global-search-input');
+      if (!overlay || !input) return;
       overlay.style.display = 'flex';
       input.value = '';
       setTimeout(function () { input.focus(); }, 50);
-    });
- 
-    /* Fermeture : bouton × */
-    closeBtn.addEventListener('click', closeModal);
- 
-    /* Fermeture : clic sur l'overlay (hors boîte) */
-    overlay.addEventListener('click', function (e) {
-      if (e.target === overlay) closeModal();
-    });
- 
-    /* Fermeture : touche Escape */
-    document.addEventListener('keydown', function (e) {
-      if ((e.key === 'Escape' || e.key === 'Esc') && overlay.style.display !== 'none') {
-        closeModal();
-      }
-    });
- 
-    /* Soumission : submit du formulaire (bouton + touche Entrée) */
-    form.addEventListener('submit', function (e) {
-      e.preventDefault(); // empêche le rechargement de la page
+      return;
+    }
+    if (e.target.closest('#searchModalClose')) {
+      closeModal();
+      return;
+    }
+    var overlay = document.getElementById('searchModalOverlay');
+    if (overlay && e.target === overlay) closeModal();
+  });
+
+  document.addEventListener('submit', function (e) {
+    if (e.target && e.target.id === 'searchModalForm') {
+      e.preventDefault();
       doSearch();
-    });
- 
-    return true; // initialisation réussie
-  }
- 
-function doSearch() {
+    }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    var overlay = document.getElementById('searchModalOverlay');
+    if (overlay && (e.key === 'Escape' || e.key === 'Esc') && overlay.style.display !== 'none') {
+      closeModal();
+    }
+  });
+
+  function doSearch() {
     var input = document.getElementById('global-search-input');
     var q = input ? input.value.trim() : '';
     if (!q) return;
     window.location.href = REMOTE_SEARCH_URL + '?q=' + encodeURIComponent(q);
   }
- 
+
   function closeModal() {
     var overlay = document.getElementById('searchModalOverlay');
     if (overlay) overlay.style.display = 'none';
