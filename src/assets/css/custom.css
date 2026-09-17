@@ -101,6 +101,11 @@ div:has(> button[aria-controls="expand-results-options-line"]) {
 display: none;
 }
 
+/* background-color nde.request.noRequests (Demandes) */
+.no-requests[data-qa="nde.request.noRequests"] {
+background-color: #d1f4da !important;
+}
+
 /* --------------------------------
 		Authentification
 -------------------------------- */
