@@ -4,6 +4,7 @@ export interface Doc {
       title?: string[];
       creator?: string[];
       creationdate?: string[];  // Add this line
+      type?: string[];
       [key: string]: any;
     };
     control?: {

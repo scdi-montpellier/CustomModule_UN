@@ -258,6 +258,12 @@ export class IstexService implements OnDestroy {
         return null;
       }
 
+      // Pas d'interrogation ISTEX pour les notices de type base de données
+      const type = pnx.display?.type?.[0];
+      if (type === 'database') {
+        return null;
+      }
+
       const { doi, title, authorLastName, issn, isbn, date } = this.extractMetadata(pnx);
       
       // Construire l'URL selon les critères disponibles et leur priorité
