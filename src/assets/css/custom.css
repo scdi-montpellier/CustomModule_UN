@@ -108,7 +108,7 @@ background-color: #d1f4da !important;
 
 /* Visibilité et fermeture filters-panel sur mobile */
 .filters-side-bar-content-mobile {
-  top: auto !important;
+  z-index: 1000 !important;
 }
 
 /* --------------------------------
