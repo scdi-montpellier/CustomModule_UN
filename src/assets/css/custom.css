@@ -238,6 +238,27 @@ nde-record-availability-after {
   width: 100%;
 }
 
+/* ISTEX : bouton d'accès en ligne + bouton ISTEX côte à côte */
+nde-record-availability .responsive-availability-layout:has(.istex) {
+  flex-direction: row !important;
+  align-items: center;      /* centrage vertical, maintenant sur le bon axe */
+  flex-wrap: wrap;          /* passe sous le bouton PDF seulement s'il manque de la place */
+}
+
+nde-record-availability .responsive-availability-layout:has(.istex) > nde-online-availability,
+nde-record-availability .responsive-availability-layout:has(.istex) > ng-component {
+  flex: 0 0 auto;
+}
+
+/* Retour à la ligne si le bouton ISTEX ne tient pas à côté du bouton d'accès en ligne */
+.responsive-availability-layout:has(.istex) {
+  flex-wrap: wrap;
+}
+
+.responsive-availability-layout > ng-component {
+  flex: 0 0 auto;
+}
+
 /* --------------------------------
 			@media
 -------------------------------- */
