@@ -4,35 +4,28 @@
 }
 
 .istex {
-  position: absolute;
-  /* right: 0; */
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
+  position: static;
+  transform: none;
+  z-index: auto;
+  display: flex;
+  align-items: center;
+  line-height: 0;
   font-size: 0.9em;
-  margin: 0.5em;
+  margin: 0.25rem 0.5em 0;
 }
 
-// Positionner par rapport au conteneur parent record-availability-and-exhibition-links
-::ng-deep .record-availability-and-exhibition-links {
-  position: relative;
-}
-
-// Utiliser ::ng-deep car le HTML est injecté via innerHTML
-// et les styles scoped du composant ne s'appliquent pas aux éléments dynamiques
 ::ng-deep .istex a {
-  display: inline-block;
+  display: flex;          
 }
 
 ::ng-deep .istex img {
   height: 32px;
   width: 128px;
-  margin-bottom: .25rem;
-  /* margin-right: .375rem; */
-  transition: opacity 0.2s ease;
+  margin: 0;
   object-fit: contain;
   display: block;
-  cursor: pointer; 
+  cursor: pointer;
+  transition: opacity 0.2s ease;
 }
 
 ::ng-deep .istex img:hover {
